@@ -6,14 +6,14 @@ import 'package:networking_learning/constant/app_constant.dart';
 import 'package:networking_learning/service/prefs_helper.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
-class DioApiClient {
+class ApiClient {
   static late Dio _dio;
   static String _bearerToken = "";
 
   // Singleton pattern
-  static final DioApiClient _instance = DioApiClient._internal();
-  factory DioApiClient() => _instance;
-  DioApiClient._internal();
+  static final ApiClient _instance = ApiClient._internal();
+  factory ApiClient() => _instance;
+  ApiClient._internal();
 
   /// Initialize Dio with base configuration
   static Future<void> initialize() async {
@@ -390,8 +390,8 @@ class _AuthInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     // Add bearer token if available
-    if (DioApiClient._bearerToken.isNotEmpty) {
-      options.headers['Authorization'] = 'Bearer ${DioApiClient._bearerToken}';
+    if (ApiClient._bearerToken.isNotEmpty) {
+      options.headers['Authorization'] = 'Bearer ${ApiClient._bearerToken}';
     }
     super.onRequest(options, handler);
   }

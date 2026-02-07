@@ -42,7 +42,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Initialize Dio API Client
-  await DioApiClient.initialize();
+  await ApiClient.initialize();
   
   runApp(const MyApp());
 }
@@ -55,7 +55,7 @@ void main() async {
 ```dart
 // After successful login, update the token in API client
 await PrefsHelper.setString(AppConstants.bearerToken, token);
-await DioApiClient.updateToken();
+await ApiClient.updateToken();
 ```
 
 ---
@@ -64,7 +64,7 @@ await DioApiClient.updateToken();
 
 ```dart
 await PrefsHelper.remove(AppConstants.bearerToken);
-DioApiClient.clearToken();
+ApiClient.clearToken();
 ```
 
 ---
@@ -75,7 +75,7 @@ DioApiClient.clearToken();
 
 ```dart
 try {
-  final response = await DioApiClient.get('/users');
+  final response = await ApiClient.get('/users');
   
   if (response.statusCode == 200) {
     print("Users: ${response.data}");
@@ -88,7 +88,7 @@ try {
 ### ✅ GET with Query Parameters
 
 ```dart
-final response = await DioApiClient.get(
+final response = await ApiClient.get(
   '/users',
   queryParameters: {
     'page': 1,
@@ -101,7 +101,7 @@ final response = await DioApiClient.get(
 ### ✅ GET with Custom Headers
 
 ```dart
-final response = await DioApiClient.get(
+final response = await ApiClient.get(
   '/api/data',
   headers: {
     'X-Custom-Header': 'Value',
@@ -116,7 +116,7 @@ final response = await DioApiClient.get(
 
 ```dart
 try {
-  final response = await DioApiClient.post(
+  final response = await ApiClient.post(
     '/auth/login',
     data: {
       'email': 'user@example.com',
@@ -139,12 +139,12 @@ try {
 
 ```dart
 // Single file upload
-final multipartFile = await DioApiClient.fileFromPath(
+final multipartFile = await ApiClient.fileFromPath(
   imageFile.path,
   filename: 'profile.jpg',
 );
 
-final response = await DioApiClient.postMultipart(
+final response = await ApiClient.postMultipart(
   '/user/upload-avatar',
   fields: {
     'user_id': '123',
@@ -165,11 +165,11 @@ final response = await DioApiClient.postMultipart(
 Map<String, MultipartFile> files = {};
 
 for (int i = 0; i < imageFiles.length; i++) {
-  final file = await DioApiClient.fileFromPath(imageFiles[i].path);
+  final file = await ApiClient.fileFromPath(imageFiles[i].path);
   files['images[$i]'] = file; // images[0], images[1], etc.
 }
 
-final response = await DioApiClient.postMultipart(
+final response = await ApiClient.postMultipart(
   '/posts/create',
   fields: {
     'title': 'My Post',
@@ -184,7 +184,7 @@ final response = await DioApiClient.postMultipart(
 ### ✅ PUT Request
 
 ```dart
-final response = await DioApiClient.put(
+final response = await ApiClient.put(
   '/user/profile',
   data: {
     'name': 'John Doe',
@@ -198,9 +198,9 @@ final response = await DioApiClient.put(
 ### ✅ PUT Multipart
 
 ```dart
-final multipartFile = await DioApiClient.fileFromPath(imageFile.path);
+final multipartFile = await ApiClient.fileFromPath(imageFile.path);
 
-final response = await DioApiClient.putMultipart(
+final response = await ApiClient.putMultipart(
   '/posts/123',
   fields: {
     'title': 'Updated Title',
@@ -216,7 +216,7 @@ final response = await DioApiClient.putMultipart(
 ### ✅ PATCH Request
 
 ```dart
-final response = await DioApiClient.patch(
+final response = await ApiClient.patch(
   '/users/123',
   data: {
     'name': 'Updated Name',
@@ -229,9 +229,9 @@ final response = await DioApiClient.patch(
 ### ✅ PATCH Multipart
 
 ```dart
-final multipartFile = await DioApiClient.fileFromPath(imageFile.path);
+final multipartFile = await ApiClient.fileFromPath(imageFile.path);
 
-final response = await DioApiClient.patchMultipart(
+final response = await ApiClient.patchMultipart(
   '/user/profile',
   fields: {
     'bio': 'Updated bio',
@@ -248,10 +248,10 @@ final response = await DioApiClient.patchMultipart(
 
 ```dart
 // Simple delete
-final response = await DioApiClient.delete('/posts/123');
+final response = await ApiClient.delete('/posts/123');
 
 // Delete with body
-final response = await DioApiClient.delete(
+final response = await ApiClient.delete(
   '/user/account',
   data: {
     'reason': 'No longer needed',
@@ -266,7 +266,7 @@ final response = await DioApiClient.delete(
 ```dart
 final savePath = '/storage/emulated/0/Download/file.pdf';
 
-final response = await DioApiClient.downloadFile(
+final response = await ApiClient.downloadFile(
   '/files/document.pdf',
   savePath,
   onReceiveProgress: (received, total) {
@@ -283,7 +283,7 @@ final response = await DioApiClient.downloadFile(
 final cancelToken = CancelToken();
 
 // Start request
-final futureResponse = DioApiClient.get(
+final futureResponse = ApiClient.get(
   '/large-data',
   cancelToken: cancelToken,
 );
@@ -300,7 +300,7 @@ cancelToken.cancel("Cancelled by user");
 
 ```dart
 try {
-  final response = await DioApiClient.get('/api/endpoint');
+  final response = await ApiClient.get('/api/endpoint');
   
   if (response.statusCode == 200) {
     // Success
@@ -322,9 +322,9 @@ try {
 ### Upload Progress Tracking
 
 ```dart
-final multipartFile = await DioApiClient.fileFromPath(imageFile.path);
+final multipartFile = await ApiClient.fileFromPath(imageFile.path);
 
-final response = await DioApiClient.postMultipart(
+final response = await ApiClient.postMultipart(
   '/upload',
   fields: {'title': 'File'},
   files: {'file': multipartFile},
@@ -344,7 +344,7 @@ final response = await DioApiClient.postMultipart(
 // 1. Login
 Future<bool> login(String email, String password) async {
   try {
-    final response = await DioApiClient.post(
+    final response = await ApiClient.post(
       '/auth/login',
       data: {'email': email, 'password': password},
     );
@@ -352,7 +352,7 @@ Future<bool> login(String email, String password) async {
     if (response.statusCode == 200) {
       final token = response.data['token'];
       await PrefsHelper.setString(AppConstants.bearerToken, token);
-      await DioApiClient.updateToken();
+      await ApiClient.updateToken();
       return true;
     }
     return false;
@@ -365,7 +365,7 @@ Future<bool> login(String email, String password) async {
 // 2. Logout
 Future<void> logout() async {
   await PrefsHelper.remove(AppConstants.bearerToken);
-  DioApiClient.clearToken();
+  ApiClient.clearToken();
   Get.offAllNamed('/login');
 }
 ```
@@ -427,7 +427,7 @@ final response = await ApiClient.getData('/users');
 
 **New:**
 ```dart
-final response = await DioApiClient.get('/users');
+final response = await ApiClient.get('/users');
 ```
 
 **Old Multipart:**
@@ -441,8 +441,8 @@ await ApiClient.postMultipartData(
 
 **New Multipart:**
 ```dart
-final multipartFile = await DioApiClient.fileFromPath(file.path);
-await DioApiClient.postMultipart(
+final multipartFile = await ApiClient.fileFromPath(file.path);
+await ApiClient.postMultipart(
   '/upload',
   fields: {'key': 'value'},
   files: {
