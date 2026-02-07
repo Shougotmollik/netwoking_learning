@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:networking_learning/controller/user_controller.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -12,10 +13,16 @@ class HomeScreen extends StatelessWidget {
       body: Obx(
         () => ListView.separated(
           itemCount: userController.userList.length,
-          itemBuilder: (context, index) => ListTile(
-            title: Text(userController.userList[index].name.toString()),
-          ),
+
           separatorBuilder: (context, index) => const Divider(),
+          itemBuilder: (context, index) => Skeletonizer(
+            enabled: userController.isLoading.value,
+            child: Column(
+              children: [
+                
+              ],
+            ),
+          ),
         ),
       ),
     );

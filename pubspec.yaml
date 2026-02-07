@@ -13,6 +13,7 @@ dependencies:
   get: ^4.7.3
   pretty_dio_logger: ^1.4.0
   shared_preferences: ^2.5.4
+  skeletonizer: ^2.1.2
 
 dev_dependencies:
   flutter_test:

@@ -1,47 +1,70 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:networking_learning/constant/api_constant.dart';
+import 'package:networking_learning/model/photo.dart';
+import 'package:networking_learning/model/todo.dart';
 import 'package:networking_learning/model/user.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:networking_learning/service/api_client.dart';
 
 class UserController extends GetxController {
   var isLoading = false.obs;
 
   var userList = <User>[].obs;
-
-  final _dio = Dio()
-    ..interceptors.add(
-      PrettyDioLogger(
-        request: true,
-        error: true,
-        responseBody: true,
-        responseHeader: true,
-      ),
-    );
+  var photosList = <Photo>[].obs;
+  var todoList = <Todo>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    fetchUser();
   }
 
   Future<void> fetchUser() async {
-    isLoading(true);
-
     try {
-      Response response = await _dio.get(
-        ApiConstant.userUrl,
-        options: Options(headers: {'Content-Type': 'application/json'}),
-      );
+      isLoading(true);
+
+      final Response response = await ApiClient.get(ApiConstant.userUrl);
 
       if (response.statusCode == 200) {
-        var json = response.data;
-        userList.value = (json as List).map((e) => User.fromJson(e)).toList();
+        final List<dynamic> jsonData = response.data;
+
+        userList.value = jsonData.map((data) => User.fromJson(data)).toList();
         isLoading(false);
       }
-    } catch (e) {
+    } on ApiException catch (e) {
+      debugPrint(e.toString());
       isLoading(false);
-      print(e);
+    }
+  }
+
+  Future<void> fetchPost() async {
+    try {
+      isLoading(true);
+      final Response response = await ApiClient.get(ApiConstant.photo);
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = response.data;
+
+        photosList.value = jsonData.map((e) => Photo.fromJson(e)).toList();
+      }
+    } on ApiException catch (e) {
+      debugPrint(e.toString());
+      isLoading(false);
+    }
+  }
+
+  Future<void> fetchTodo() async {
+    try {
+      isLoading(true);
+      final Response response = await ApiClient.get(ApiConstant.todo);
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = response.data;
+
+        todoList.value = jsonData.map((item) => Todo.fromJson(item)).toList();
+        isLoading(false);
+      }
+    } on ApiException catch (e) {
+      debugPrint(e.toString());
+      isLoading(true);
     }
   }
 }
